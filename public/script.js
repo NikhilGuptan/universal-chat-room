@@ -1,10 +1,14 @@
+
+// getting socket data
 const socket = io()
-let name;
+let userName;
 let textarea = document.querySelector('#textarea')
 let messageArea = document.querySelector('.message__area')
+
+// loop to enter an mane for user
 do {
-    name = prompt('Please enter your name: ')
-} while(!name)
+    userName = prompt('Please enter your name: ')
+} while(!userName)
 
 textarea.addEventListener('keyup', (e) => {
     if(e.key === 'Enter') {
@@ -12,21 +16,27 @@ textarea.addEventListener('keyup', (e) => {
     }
 })
 
+// setting userName
+function settingTheName(){
+    document.getElementById("userName").innerHTML = userName;
+}
+settingTheName();
+
+
+// sending the messages which are present in socket.io
 function sendMessage(message) {
     let msg = {
-        user: name,
+        user: userName,
         message: message.trim()
     }
-    // Append 
     appendMessage(msg, 'outgoing')
     textarea.value = ''
     scrollToBottom()
-
-    // Send to server 
     socket.emit('message', msg)
 
 }
 
+// function to append data
 function appendMessage(msg, type) {
     let mainDiv = document.createElement('div')
     let className = type
@@ -40,12 +50,14 @@ function appendMessage(msg, type) {
     messageArea.appendChild(mainDiv)
 }
 
-// Recieve messages 
+// Recieving messages from socket.io
 socket.on('message', (msg) => {
     appendMessage(msg, 'incoming')
     scrollToBottom()
 })
 
+
+// function so every new message view.
 function scrollToBottom() {
     messageArea.scrollTop = messageArea.scrollHeight
 }
